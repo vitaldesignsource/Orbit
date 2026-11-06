@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#c8ded8"><meta name="description" content="A browser desktop with a compiled Qwenputer RV32IM neural circuit. Run RISC-V C programs, MicroPython, and ISA tests.">
+<title>Orbit — A computer in the weights.</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23263530'/%3E%3Ccircle cx='32' cy='32' r='13' fill='none' stroke='%23d8eee0' stroke-width='5'/%3E%3Cellipse cx='32' cy='32' rx='26' ry='8' transform='rotate(-35 32 32)' fill='none' stroke='%23d8eee0' stroke-width='3'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css"><script type="module" src="desktop.js"></script>
+</head>
+<body>
+<div id="wallpaper" class="wallpaper" aria-hidden="true">
+<svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice"><defs>
+<linearGradient id="sky" x2="0" y2="1"><stop stop-color="var(--sky-top)"/><stop offset="1" stop-color="var(--sky-bottom)"/></linearGradient>
+<linearGradient id="hill1" x1="0" y1="0" x2="1" y2="1"><stop stop-color="var(--hill-one)"/><stop offset="1" stop-color="var(--hill-two)"/></linearGradient>
+<linearGradient id="hill2" x1="0" y1="0" x2="1" y2="1"><stop stop-color="var(--hill-three)"/><stop offset="1" stop-color="var(--hill-four)"/></linearGradient>
+<radialGradient id="sun"><stop stop-color="#fff9d9"/><stop offset="1" stop-color="#f8e3af"/></radialGradient>
+<filter id="noise"><feTurbulence type="fractalNoise" baseFrequency=".7" numOctaves="3" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="linear" slope=".055"/></feComponentTransfer></filter>
+</defs>
+<path fill="url(#sky)" d="M0 0h1600v1000H0z"/><circle cx="1250" cy="280" r="115" fill="url(#sun)"/>
+<path fill="var(--distant)" d="M0 600C200 520 350 590 540 555S960 400 1140 500s300 40 460-15v515H0z"/>
+<path fill="url(#hill1)" d="M0 1000V720C260 530 490 490 690 620s520 125 910-100v480z"/>
+<path fill="url(#hill2)" d="M0 1000V835c300 70 520-180 780-180 380 0 490 220 820 85v260z"/>
+<path fill="var(--front)" d="M400 1000c300-110 650-140 1200-20v20z"/>
+<path fill="none" stroke="#ffffff" stroke-opacity=".13" d="M0 845c300 70 520-180 780-180 380 0 490 220 820 85"/>
+<path filter="url(#noise)" opacity=".6" d="M0 0h1600v1000H0z"/>
+</svg>
+<div class="wallpaper-word">make room for possibility.</div>
+</div>
+<header class="menubar"><div class="menu-left"><button id="orbit-menu" class="brand" title="Open app launcher" aria-label="Open app launcher"></button><span class="brand-name">Orbit OS</span><span class="menu-divider"></span><span id="active-app">Welcome</span><button id="help-button" class="top-link">Help</button></div><div class="menu-right"><span class="local-indicator"><i></i> All systems local</span><button id="fullscreen" class="top-icon" aria-label="Enter fullscreen" title="Fullscreen"></button><span id="wifi-icon" class="top-icon" title="Runs in your browser"></span><button id="control-button" class="top-icon" aria-label="Open settings" title="Settings"></button><button id="clock-button" class="clock" title="Current date and time"></button></div></header>
+<main id="desktop" aria-label="Orbit desktop"><nav class="desktop-shortcuts" aria-label="Desktop apps"></nav><div class="desktop-date"><span id="day-label"></span><span id="date-label"></span><div><span class="little-star">✧</span> A fresh space for your ideas.</div></div><div id="windows"></div></main>
+<div class="desktop-footer"><span class="tiny-orbit">◌</span> YOUR BROWSER. YOUR WORLD.<span class="version">ORBIT OS / 1.0</span></div>
+<nav id="dock" class="dock" aria-label="Application dock"></nav>
+<div id="toast" class="toast" role="status"></div>
+<div id="launcher-overlay" class="overlay" hidden><section class="launcher" role="dialog" aria-modal="true" aria-labelledby="launcher-title"><div class="launcher-search"><span id="search-icon"></span><input id="launcher-search" aria-label="Search apps and files" placeholder="What would you like to open?" autocomplete="off"><kbd>esc</kbd></div><div class="launcher-meta"><span id="launcher-title">YOUR APPLICATIONS</span><span>Click to launch ↵</span></div><div id="launcher-results"></div><div class="launcher-footer"><span>Everything you need. A little closer.</span><span>Orbit OS</span></div></section></div>
+<div id="context-menu" class="context-menu" hidden><button data-context="welcome">About this computer <span>↗</span></button><button data-context="files">Open Files <span>⌘</span></button><button data-context="settings">Change wallpaper <span>✧</span></button></div>
+</body></html>

@@ -1,0 +1,15 @@
+{
+  "name": "orbit-neural-computer",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "A browser desktop with a compiled Qwenputer RV32IM neural CPU circuit and a reference interpreter",
+  "scripts": {
+    "test": "node tests/cpu.test.mjs && node tests/reference-fixtures.mjs && node tests/snapshot.test.mjs && node tests/neural.test.mjs",
+    "test:cpu": "node tests/cpu.test.mjs",
+    "test:reference": "node tests/reference-fixtures.mjs",
+    "test:neural": "node tests/neural.test.mjs",
+    "test:snapshot": "node tests/snapshot.test.mjs",
+    "test:neural:all": "node tests/neural.test.mjs --all --write-report"
+  }
+}
