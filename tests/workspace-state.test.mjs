@@ -1,0 +1,32 @@
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import {gunzipSync} from 'node:zlib';
+import {newSession,exportWorkspace,importWorkspace,unpackState,PATHS} from '../dist/machine/workspace-session.js';
+import {NeuralRV32} from '../dist/machine/neural.js';
+import {captureNeural,restoreNeural} from '../dist/machine/checkpoint.js';
+import {Stories260K} from '../dist/machine/tiny-model.js';
+import {CompiledVectorUnit} from '../dist/machine/vector.js';
+const root=new URL('../dist/machine/',import.meta.url);
+const file=path=>readFile(new URL(path,root));
+const json=async path=>JSON.parse(gunzipSync(await file(path)));
+const s=newSession(),unit=new CompiledVectorUnit();
+s.fs.writeFile('/documents/hello 🌓.txt','Saved inside recurrent heads.\n你好');
+const binary=Uint8Array.from({length:1024},(_,i)=>(i*79)&255);s.fs.writeFile('/documents/binary.bin',binary);
+s.fs.writeFile(PATHS.model,await file('models/stories260K.bin'));s.fs.writeFile(PATHS.tokenizer,await file('models/tok512.bin'));
+s.model=new Stories260K(s.fs.readFile(PATHS.model),s.fs.readFile(PATHS.tokenizer),{unit});s.unit=unit;s.model.begin('One day',{temperature:.8,seed:1234});for(let i=0;i<8;i++)s.model.step();
+const expectedModel=new Stories260K(s.fs.readFile(PATHS.model),s.fs.readFile(PATHS.tokenizer),{unit});expectedModel.loadState(s.model.getState());const expectedTokens=Array.from({length:10},()=>expectedModel.step().token);
+const circuit=await json('neural-circuit.json.gz'),cpu=new NeuralRV32(circuit);cpu.loadSnapshot(await json('fixtures/c-hello.snapshot.json.gz'));for(let i=0;i<7;i++)cpu.stepToken();
+s.cpuView={getMachine:()=>({cpu,backend:'neural',program:{id:'c-hello',name:'C hello',language:'c'}})};
+const expectedCPU=restoreNeural(circuit,captureNeural(cpu));const expectedCPUTrace=[];while(expectedCPU.state!=='halted')expectedCPUTrace.push(expectedCPU.stepToken());
+const packed=await exportWorkspace(s);assert.ok(packed.length>100000);assert.equal(packed[0],31);const envelope=await unpackState(packed);assert.equal(envelope.format,'orbit-recurrent-workspace');assert.ok(envelope.filesystem.data);
+// Destroy the original authoritative head state and model working state. Restore
+// only from the saved artifact, not from any still-live shadow filesystem.
+for(const head of s.fs.headStates)head.fill(0);s.model.reset();
+const restored=await importWorkspace(packed,{circuit,unit,createModel:(m,t,u)=>new Stories260K(m,t,{unit:u})});
+assert.equal(restored.fs.readText('/documents/hello 🌓.txt'),'Saved inside recurrent heads.\n你好');assert.deepEqual(restored.fs.readFile('/documents/binary.bin'),binary);assert.equal(restored.fs.stat(PATHS.model).size,1056540);
+assert.deepEqual(Array.from({length:10},()=>restored.model.step().token),expectedTokens);
+assert.equal(restored.cpuError,null);const actualCPUTrace=[];while(restored.restoredCpu.cpu.state!=='halted')actualCPUTrace.push(restored.restoredCpu.cpu.stepToken());assert.deepEqual(actualCPUTrace,expectedCPUTrace);assert.equal(restored.restoredCpu.cpu.output,'Hello from C!\n55\n');
+const noRuntimes=await importWorkspace(packed);assert.equal(noRuntimes.fs.readText('/documents/hello 🌓.txt'),'Saved inside recurrent heads.\n你好');assert.ok(noRuntimes.cpuError&&noRuntimes.modelError);
+restored.fs.delete(PATHS.model);restored.cpuView=null;const missingModel=await exportWorkspace(restored);const recovered=await importWorkspace(missingModel,{unit,createModel:(m,t,u)=>new Stories260K(m,t,{unit:u})});assert.ok(recovered.modelError);assert.equal(recovered.model,null);assert.equal(recovered.fs.readText('/documents/hello 🌓.txt'),'Saved inside recurrent heads.\n你好');
+await assert.rejects(()=>importWorkspace(new TextEncoder().encode('{}')),/not an Orbit/);
+console.log(`Workspace save/import passed: ${packed.length.toLocaleString()} compressed bytes; files, original model, sampled KV/RNG continuation, and paused neural CPU all restored.`);

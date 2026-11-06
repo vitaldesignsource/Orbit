@@ -40,7 +40,8 @@ export function createComputer(api){
  if(!document.querySelector('#rv-lab-css')){const link=document.createElement('link');link.rel='stylesheet';link.id='rv-lab-css';link.href=url('lab.css');document.head.append(link);}
  const root=document.createElement('div');root.className='rv-lab';
  root.innerHTML=`<header class="rv-header"><div class="rv-chipmark">▧</div><div class="rv-heading"><h1>A computer in the weights.</h1><p>RV32IM + Zba · Compiled for Qwen3.5‑4B</p></div><span class="rv-badge">11 NEURAL LAYERS</span></header><nav class="rv-tabs" aria-label="Computer views"><button class="rv-tab active" data-tab="programs">Programs</button><button class="rv-tab" data-tab="tests">ISA tests</button><button class="rv-tab" data-tab="state">Memory & registers</button><button class="rv-tab" data-tab="architecture">Inside the machine</button></nav><div class="rv-view"><div class="rv-loader"><div class="rv-loading-orbit spinning"></div><strong>Bringing the circuit into orbit.</strong><p>Loading program information. The compiled circuit runs on your device.</p></div></div>`;
- const view=root.querySelector('.rv-view');let manifest,programs=[],current=null,cpu=null,backend='neural',tab='programs',running=false,disposed=false,runId=0,loaded=false,totalStart=0,lastPaint=0,executionMs=0,consoleText='',testsRunning=false,testCancel=false,loadGeneration=0,replacementDestroy=null,loadingProgram=false,customCount=0;const testResults=new Map();
+ const view=root.querySelector('.rv-view');let manifest,programs=[],current=null,cpu=null,backend='neural',tab='programs',running=false,disposed=false,runId=0,loaded=false,totalStart=0,lastPaint=0,executionMs=0,consoleText='',testsRunning=false,testCancel=false,loadGeneration=0,replacementDestroy=null,loadingProgram=false,customCount=0,pendingRestore=false,restoreGeneration=0,replacementView=null;const testResults=new Map();
+ let resolveManifest,rejectManifest;const manifestReady=new Promise((resolve,reject)=>{resolveManifest=resolve;rejectManifest=reject;});manifestReady.catch(()=>{});
  const $=s=>root.querySelector(s);
  function print(text){consoleText+=text;const c=$('.rv-console');if(c){c.textContent=consoleText;c.scrollTop=c.scrollHeight;}}
  function metrics(){if(!cpu)return;const values={tokens:fmt(cpu.tokens),instructions:fmt(cpu.instructions),pc:'0x'+Number(cpu.pc??0).toString(16).padStart(8,'0'),state:cpu.state??'Ready',time:(executionMs/1000).toFixed(2)+' s'};for(const [key,value] of Object.entries(values)){const e=$(`[data-metric="${key}"]`);if(e)e.textContent=value;}const status=$('.rv-status');if(status){status.classList.toggle('running',running);status.lastChild.textContent=running?'Running':loaded?(cpu.state==='halted'?'Halted':cpu.state==='faulted'||cpu.state==='fault'?'Fault':'Ready'):'Not loaded';}const run=$('[data-action="run"]');if(run)run.textContent=running?'Ⅱ Pause':'▶ Run';updateEditorStatus();}
@@ -57,6 +58,7 @@ export function createComputer(api){
    if(p.language==='python')p.editorSource=source;
    $('.rv-code').value=source;updateEditorStatus();
    let bytes=p.elfBytes;
+   if(!bytes&&p.customScript&&source===p.appliedSource){bytes=await patchPython(source);if(!isCurrent())return;}
    if(applyScript){bytes=await patchPython(source);if(!isCurrent())return;}
    let nextCPU;
    if(engine==='neural'){
@@ -64,10 +66,12 @@ export function createComputer(api){
     if(!isCurrent())return;
     let snapshot;
     if(bytes){const {buildSnapshot}=await import('./snapshot.js');if(!isCurrent())return;snapshot=buildSnapshot(bytes,graph,{name:p.name});}
+    else if(p.checkpointSnapshot)snapshot=p.checkpointSnapshot;
     else{snapshot=await getJSON(p.snapshot);if(!isCurrent())return;}
     nextCPU=new NeuralRV32(graph,{onOutput:print});nextCPU.loadSnapshot(snapshot);
    }else{
     const {RV32}=await import('./cpu.js');if(!isCurrent())return;
+    if(!bytes&&!p.elf)throw Error('This saved neural image has no original ELF. Upload its ELF to run it in reference mode.');
     bytes??=await getBytes(p.elf);if(!isCurrent())return;
     nextCPU=new RV32({memoryMap:'qwenputer',onOutput:print});nextCPU.loadELF(bytes);
    }
@@ -87,7 +91,7 @@ export function createComputer(api){
   const dirty=python&&typeof source==='string'&&source!==current.appliedSource;
   const size=python&&typeof source==='string'?pythonBytes(source).length:0;
   const status=$('[data-source-status]');
-  if(status)status.textContent=python?`${typeof source!=='string'?'Loading script':dirty?'Edited script · apply before running':current.customScript?'Custom Python loaded':'Bundled Python script'} · ${size} / ${PYTHON_LIMIT} UTF-8 bytes (including final newline)`:current?.elfBytes?'Uploaded static RV32 ELF · source not included':'Precompiled example · source is read-only';
+  if(status)status.textContent=python?`${typeof source!=='string'?'Loading script':dirty?'Edited script · apply before running':current.customScript?'Custom Python loaded':'Bundled Python script'} · ${size} / ${PYTHON_LIMIT} UTF-8 bytes (including final newline)`:current?.elfBytes?'Uploaded static RV32 ELF · source not included':current?.restoredImage?'Restored machine image · source is read-only':'Precompiled example · source is read-only';
   const apply=$('[data-action="apply-script"]');
   if(apply)apply.disabled=loadingProgram||running||typeof source!=='string'||size>PYTHON_LIMIT;
   const run=$('[data-action="run"]'),step=$('[data-action="step"]');
@@ -121,14 +125,14 @@ export function createComputer(api){
   $('.rv-backend').onchange=e=>{backend=e.target.value;setupProgram(current);};
   $('[data-action="load-elf"]').onclick=()=>$('.rv-elf-input').click();
   $('.rv-elf-input').onchange=e=>loadUploadedELF(e.target.files?.[0]);
-  $('.rv-download-elf').onclick=downloadProgram;
+  $('.rv-download-elf').onclick=downloadProgram;$('.rv-download-elf').hidden=!current?.elf&&!current?.elfBytes;
   if(python){
    $('.rv-code').oninput=e=>{stop();current.editorSource=e.target.value;updateEditorStatus();};
    $('[data-action="apply-script"]').onclick=()=>setupProgram(current,{applyScript:true});
   }
   $('[data-action="run"]').onclick=()=>running?stop():startRun();
   $('[data-action="step"]').onclick=()=>{if(!loaded||running)return;try{execute(1);metrics();}catch(error){showError(error);}};
-  $('[data-action="reset"]').onclick=()=>setupProgram(current);
+  $('[data-action="reset"]').onclick=resetProgram;
   $('[data-action="clear"]').onclick=()=>{consoleText='';$('.rv-console').textContent='';};metrics();updateEditorStatus();
  }
  function execute(budget){const t=performance.now();const before=cpu.output||'';cpu.run(budget);executionMs+=performance.now()-t;
@@ -148,6 +152,54 @@ export function createComputer(api){
  }
  function switchTab(name){stop();loadGeneration++;if(tab==='tests'&&name!=='tests')testCancel=true;tab=name;for(const b of root.querySelectorAll('[data-tab]'))b.classList.toggle('active',b.dataset.tab===name);if(name==='architecture')architecture();else if(name==='state')renderState();else if(name==='tests')renderTests();else if(current)setupProgram(current);}
  for(const b of root.querySelectorAll('[data-tab]'))b.onclick=()=>switchTab(b.dataset.tab);
- getManifest().then(m=>{if(disposed)return;manifest=m;programs=m.programs;current=programs.find(p=>p.id===m.defaultProgram)||programs.find(p=>p.language==='c')||programs.find(p=>p.language!=='test');if(!current)throw Error('No programs available');setupProgram(current);}).catch(error=>{view.innerHTML=`<div class="rv-loader"><strong>The circuit could not load.</strong><p>${h(error.message)}</p><button class="rv-button" data-retry>Try again</button></div>`;$('[data-retry]').onclick=()=>{const replacement=createComputer(api);replacementDestroy=replacement.destroy;root.replaceWith(replacement.element);};});
- return {element:root,title:'Neural Computer · Qwen3.5 RV32',destroy:()=>{disposed=true;loadGeneration++;stop();testCancel=true;replacementDestroy?.();}};
+ function programMetadata(p){
+  if(!p)return null;const meta={};
+  for(const key of ['id','name','language','source','elf','editorSource','appliedSource','code'])if(typeof p[key]==='string')meta[key]=p[key];
+  if(p.customScript)meta.customScript=true;
+  if(p.restoredImage)meta.restoredImage=true;
+  return meta;
+ }
+ function getMachine(){
+  if(replacementView)return replacementView.getMachine();
+  if(!cpu||!loaded)return null;stop();return {cpu,backend,program:programMetadata(current)};
+ }
+ function resetProgram(){
+  if(current?.checkpointSnapshot&&backend==='neural'&&cpu){
+   stop();loadGeneration++;cpu.reset();consoleText='';executionMs=0;loaded=true;loadingProgram=false;renderPrograms();
+   print(`Orbit machine · compiled Qwen circuit\n${current.name} · restored image reset\n────────────────────────────\n`);metrics();return;
+  }
+  setupProgram(current);
+ }
+ async function setMachine(machine){
+  if(replacementView)return replacementView.setMachine(machine);
+  if(disposed)return false;
+  if(!machine?.cpu||typeof machine.cpu.run!=='function'||!['neural','reference'].includes(machine.backend??'neural'))throw Error('A restored Orbit machine is required.');
+  const request=++restoreGeneration;pendingRestore=true;stop();loadGeneration++;testCancel=true;
+  await manifestReady;
+  if(disposed||request!==restoreGeneration)return false;
+  const meta=machine.program||{},known=programs.find(p=>p.id===meta.id);
+  // Only the current manifest supplies fetchable URLs. An imported checkpoint's
+  // metadata can carry display text, but cannot redirect asset fetches elsewhere.
+  const p={...(known||{}),id:typeof meta.id==='string'?meta.id.slice(0,128):`restored-${++customCount}`,name:typeof meta.name==='string'?meta.name.slice(0,256):'Restored machine',language:['c','python','assembly','elf'].includes(meta.language)?meta.language:known?.language||'elf',restoredImage:true};
+  for(const key of ['editorSource','appliedSource','code'])if(typeof meta[key]==='string')p[key]=meta[key].slice(0,65536);
+  p.customScript=!!meta.customScript;
+  p.checkpointSnapshot=machine.backend==='reference'?null:machine.cpu.snapshot;
+  if(!p.source&&typeof p.editorSource!=='string'&&!p.code)p.code='// Restored machine image\n// Program state is held in recurrent memory.\n// The original source or ELF was not saved with this checkpoint.\n';
+  const existing=programs.findIndex(item=>item.id===p.id);if(existing<0)programs.push(p);else programs[existing]=p;
+  current=p;backend=machine.backend??'neural';cpu=machine.cpu;
+  if(backend==='neural'){cpu.options??={};cpu.options.onOutput=print;}else cpu.onOutput=print;
+  loaded=true;loadingProgram=false;pendingRestore=false;executionMs=0;consoleText=cpu.output||'';tab='programs';
+  for(const b of root.querySelectorAll('[data-tab]'))b.classList.toggle('active',b.dataset.tab==='programs');
+  renderPrograms();metrics();
+  const generation=loadGeneration;
+  if(typeof p.editorSource==='string')$('.rv-code').value=p.editorSource;
+  else if(p.code)$('.rv-code').value=p.code;
+  else if(p.source){
+   try{const source=await getText(p.source);if(!disposed&&request===restoreGeneration&&generation===loadGeneration&&current===p&&tab==='programs'){$('.rv-code').value=source;if(p.language==='python'){p.editorSource=source;p.appliedSource??=source;}updateEditorStatus();}}
+   catch(error){if(!disposed&&request===restoreGeneration&&generation===loadGeneration&&current===p&&tab==='programs')$('.rv-code').value='// Source could not be loaded. The restored machine state remains available.\n';}
+  }
+  updateEditorStatus();return true;
+ }
+ getManifest().then(m=>{if(disposed){resolveManifest(m);return;}manifest=m;programs=m.programs.map(p=>({...p}));resolveManifest(m);if(pendingRestore)return;current=programs.find(p=>p.id===m.defaultProgram)||programs.find(p=>p.language==='c')||programs.find(p=>p.language!=='test');if(!current)throw Error('No programs available');setupProgram(current);}).catch(error=>{rejectManifest(error);if(disposed)return;view.innerHTML=`<div class="rv-loader"><strong>The circuit could not load.</strong><p>${h(error.message)}</p><button class="rv-button" data-retry>Try again</button></div>`;$('[data-retry]').onclick=()=>{const replacement=createComputer(api);replacementView=replacement;replacementDestroy=replacement.destroy;root.replaceWith(replacement.element);};});
+ return {element:root,title:'Neural Computer · Qwen3.5 RV32',getMachine,setMachine,destroy:()=>{disposed=true;loadGeneration++;restoreGeneration++;stop();testCancel=true;replacementDestroy?.();}};
 }

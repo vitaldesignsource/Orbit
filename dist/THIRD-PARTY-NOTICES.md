@@ -63,3 +63,7 @@ each output ecall and exits on the neural CPU. Any in-browser C compiler has a
 separate description of its supported language subset.
 
 Artifact hashes and source provenance: [machine/provenance.json](machine/provenance.json).
+
+## Karpathy Stories260K and llama2.c
+
+Original checkpoint and tokenizer from `karpathy/tinyllamas` revision `0bd21da7698eaf29a0d7de3992de8a46ef624add`; native reference code from `karpathy/llama2.c` commit `350e04fe35433e6d2941dce5a1f53308f87058eb`. Model card and code are MIT licensed. See [models/README.md](machine/models/README.md) and [license](machine/models/LICENSE) for exact hashes and attribution.

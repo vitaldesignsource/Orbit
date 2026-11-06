@@ -1,10 +1,41 @@
-# Orbit
+# Orbit 2
 
-A computer-shaped website with a real compiled neural RISC-V circuit.
+A stateful neural computer in a browser: recurrent-memory files, a compiled vector datapath, Karpathy’s trained Stories260K model, and a verified neural RISC-V CPU.
 
 Orbit combines a local desktop (windows, files, notes, terminal, calculator, and wallpapers) with a machine lab based on [Qwenputer](https://github.com/divagr18/qwenputer/tree/main/experimental/riscv).
 
-## What actually executes
+## Save files in a chat and restore them later
+
+1. Open **Memory Drive** inside the computer. Create a file or import one.
+2. Use **Stories260K → Load & generate** to run the real model. Its original checkpoint and tokenizer are copied into Memory Drive.
+3. Stop generation, then choose **Export state**. CPU execution pauses; model KV cache, token queues, and RNG are committed into the recurrent filesystem. The downloaded `.orbit-state` file contains the filesystem matrices and the paused neural CPU state.
+4. Attach that file to your chat, or keep it anywhere you store files. Later, choose **Import** to recover the files and use **Continue saved state** to resume generation.
+
+The attachment is the durable copy. Chat text alone does not capture a running browser machine. Memory Drive does not use browser localStorage as its filesystem backing store.
+
+The filesystem has 4 MiB capacity, 128 directory records, and 256 UTF-8 bytes per path. The API supports capacities up to 16 MiB. Names, directory records, model bytes, and ordinary file contents are encoded in Gated DeltaNet recurrent head matrices. Host JavaScript performs directory allocation; every storage read/write evaluates the compiled address/value projections and recurrent overwrite/read equations. It is a separate storage extension, without a guest POSIX filesystem driver.
+
+State import restores valid files even when optional CPU/model continuation is unavailable or incompatible. The snapshot codec packs the native byte/ballast matrix palette losslessly and restores the exact recurrent matrices.
+
+## Vector unit and the 260K language model
+
+The vector extension compiles fixed weighted affine and multiplicative circuits for matrix multiplication, causal attention, softmax, RMSNorm, and SiLU. Exponential, reciprocal, and reciprocal square-root operations use bounded polynomial/Newton circuits. Runtime vector inference does not call host `Math.exp` or `Math.sqrt` as a hidden model backend.
+
+`dist/machine/vector-weights.json` includes the numerical circuit and sparse SwiGLU up/gate/down emission weights with explicit approximation bounds. Rebuild it with:
+
+```sh
+npm run compile:vector
+```
+
+These floating-point numerical circuits are evaluated separately from the integer CPU circuit. A full merged Qwen checkpoint containing the storage and vector extensions has not been emitted or verified. The sparse SwiGLU target is approximate; it does not inherit the integer circuit’s bf16 exactness proof.
+
+The model is the authentic [Karpathy Stories260K](https://github.com/karpathy/llama2.c/blob/master/doc/stories260K.md) checkpoint: 260,032 trained parameters, dimension 64, five layers, eight query heads, four KV heads, vocabulary 512, and context 512. All forward arithmetic uses the compiled vector unit. Compared with the original native `run.c`, all 200 tested greedy token IDs match and 1,536 logits have maximum absolute error `6.67e-6`. This is a small TinyStories model.
+
+The authoritative model files and saved generation state live in Memory Drive. Active tensor buffers and KV working arrays are materialized in browser memory; checkpointing commits the resumable state into the recurrent filesystem. The vector operations are host-scheduled and are not RV32 vector instructions or a guest program running the model on the scalar CPU.
+
+Model hashes, exact source revisions, license, binary format, and native reference regeneration are documented in [models/README.md](dist/machine/models/README.md).
+
+## What the RISC-V CPU executes
 
 - **Neural circuit**: sparse weighted equations of Qwenputer's 11 compiled Qwen3.5-compatible Gated DeltaNet/SwiGLU CPU layers. Machine state lives in recurrent head matrices. Instructions are not interpreted by an opcode switch on this path.
 - **Reference**: a conventional RV32IM + Zba JavaScript interpreter for comparison and fast execution.
@@ -67,7 +98,7 @@ The site's ISA tests run on demand and show results from actual execution in the
 
 The circuit compiler, fixture binaries, and program sources derive from Qwenputer at commit `cb1c969cf4e9b6d703c16678be42c9cf3a2d42fe` (MIT, Divyansh Agrawal). The JavaScript executor implements its documented sparse circuit equations. Retain the notices in `dist/LICENSE-qwenputer.txt` and the third-party notices alongside the fixtures.
 
-The standalone circuit uses Qwen3.5-4B's layer capacity, not its learned language-model weights. It is a compiled digital circuit compatible with that architecture; it is not an LLM guessing instruction results.
+The standalone CPU circuit uses Qwen3.5-4B's layer capacity, not its learned language-model weights. It is a compiled digital circuit compatible with that architecture; it is not an LLM guessing instruction results.
 
 ## Rebuild the compiled circuit assets
 
@@ -81,6 +112,8 @@ python scripts/export-circuit.py /tmp/qwenputer dist/machine
 
 It emits the actual sparse circuit weights, recurrent machine snapshots, program manifest, and reference traces. It does not download or merge Qwen's learned language-model weights. Use the upstream `chipformer.rv.merge` workflow in a suitable inference environment for the full model.
 
-## Local desktop storage
+## Desktop files and Memory Drive
 
-Notes, imported text files, and wallpaper settings use browser local storage on this origin. They remain on the current browser/device. Download important files to preserve them elsewhere. The desktop terminal is a local shell for these files, separate from the neural machine lab.
+The original desktop Notes, Files, and wallpaper settings use browser local storage on this origin. They remain on the current browser/device. Download important files to preserve them elsewhere. The desktop terminal is a local shell for these files, separate from the neural machine lab.
+
+Memory Drive is a separate filesystem inside recurrent matrices. Export its state to preserve it; the original desktop Files app is not included in that recurrent drive snapshot. Visual browser QA was unavailable in the managed environment; DOM integration, native-reference model checks, and state round-trip tests cover the implemented flows.

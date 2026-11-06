@@ -4,7 +4,7 @@
   "neuralWeights": false,
   "scope": "Qwenputer repository supplied rv32ui, rv32um and rv32uzba ELF fixtures. These runs verify the JavaScript reference interpreter, not Qwen3.5 model execution.",
   "source": "https://github.com/divagr18/qwenputer",
-  "generatedAt": "2026-11-06T03:15:56.420Z",
+  "generatedAt": "2026-11-06T03:39:24.442Z",
   "passed": 51,
   "total": 51,
   "subsets": {
@@ -20,7 +20,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 427,
-      "elapsedMs": 2.28
+      "elapsedMs": 2.9
     },
     {
       "name": "rv32ui-addi",
@@ -29,7 +29,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 204,
-      "elapsedMs": 0.7
+      "elapsedMs": 0.69
     },
     {
       "name": "rv32ui-and",
@@ -38,7 +38,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 447,
-      "elapsedMs": 0.65
+      "elapsedMs": 0.66
     },
     {
       "name": "rv32ui-andi",
@@ -47,7 +47,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 160,
-      "elapsedMs": 0.42
+      "elapsedMs": 0.57
     },
     {
       "name": "rv32ui-auipc",
@@ -56,7 +56,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 21,
-      "elapsedMs": 1.42
+      "elapsedMs": 0.89
     },
     {
       "name": "rv32ui-beq",
@@ -65,7 +65,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 253,
-      "elapsedMs": 0.49
+      "elapsedMs": 0.82
     },
     {
       "name": "rv32ui-bge",
@@ -74,7 +74,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 271,
-      "elapsedMs": 0.49
+      "elapsedMs": 0.64
     },
     {
       "name": "rv32ui-bgeu",
@@ -83,7 +83,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 296,
-      "elapsedMs": 1.78
+      "elapsedMs": 2.19
     },
     {
       "name": "rv32ui-blt",
@@ -92,7 +92,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 253,
-      "elapsedMs": 0.52
+      "elapsedMs": 0.61
     },
     {
       "name": "rv32ui-bltu",
@@ -101,7 +101,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 278,
-      "elapsedMs": 0.51
+      "elapsedMs": 0.52
     },
     {
       "name": "rv32ui-bne",
@@ -110,7 +110,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 253,
-      "elapsedMs": 0.65
+      "elapsedMs": 0.48
     },
     {
       "name": "rv32ui-jal",
@@ -119,7 +119,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 17,
-      "elapsedMs": 0.35
+      "elapsedMs": 0.32
     },
     {
       "name": "rv32ui-jalr",
@@ -137,7 +137,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 191,
-      "elapsedMs": 0.49
+      "elapsedMs": 0.43
     },
     {
       "name": "rv32ui-lbu",
@@ -146,7 +146,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 191,
-      "elapsedMs": 0.37
+      "elapsedMs": 0.45
     },
     {
       "name": "rv32ui-ld_st",
@@ -155,7 +155,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 828,
-      "elapsedMs": 0.77
+      "elapsedMs": 1.24
     },
     {
       "name": "rv32ui-lh",
@@ -164,7 +164,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 207,
-      "elapsedMs": 0.58
+      "elapsedMs": 0.63
     },
     {
       "name": "rv32ui-lhu",
@@ -173,7 +173,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 216,
-      "elapsedMs": 0.33
+      "elapsedMs": 0.4
     },
     {
       "name": "rv32ui-lui",
@@ -182,7 +182,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 27,
-      "elapsedMs": 1.45
+      "elapsedMs": 2.17
     },
     {
       "name": "rv32ui-lw",
@@ -191,7 +191,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 221,
-      "elapsedMs": 0.34
+      "elapsedMs": 0.39
     },
     {
       "name": "rv32ui-or",
@@ -200,7 +200,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 450,
-      "elapsedMs": 0.4
+      "elapsedMs": 0.45
     },
     {
       "name": "rv32ui-ori",
@@ -209,7 +209,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 167,
-      "elapsedMs": 0.38
+      "elapsedMs": 0.32
     },
     {
       "name": "rv32ui-sb",
@@ -218,7 +218,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 380,
-      "elapsedMs": 0.41
+      "elapsedMs": 0.63
     },
     {
       "name": "rv32ui-sh",
@@ -227,7 +227,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 433,
-      "elapsedMs": 1.9
+      "elapsedMs": 1.57
     },
     {
       "name": "rv32ui-simple",
@@ -236,7 +236,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 3,
-      "elapsedMs": 0.25
+      "elapsedMs": 0.26
     },
     {
       "name": "rv32ui-sll",
@@ -245,7 +245,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 455,
-      "elapsedMs": 0.37
+      "elapsedMs": 0.5
     },
     {
       "name": "rv32ui-slli",
@@ -254,7 +254,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 203,
-      "elapsedMs": 0.35
+      "elapsedMs": 0.29
     },
     {
       "name": "rv32ui-slt",
@@ -263,7 +263,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 421,
-      "elapsedMs": 0.55
+      "elapsedMs": 0.62
     },
     {
       "name": "rv32ui-slti",
@@ -272,7 +272,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 199,
-      "elapsedMs": 0.47
+      "elapsedMs": 0.46
     },
     {
       "name": "rv32ui-sltiu",
@@ -281,7 +281,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 199,
-      "elapsedMs": 0.29
+      "elapsedMs": 0.32
     },
     {
       "name": "rv32ui-sltu",
@@ -290,7 +290,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 421,
-      "elapsedMs": 0.38
+      "elapsedMs": 0.37
     },
     {
       "name": "rv32ui-sra",
@@ -299,7 +299,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 474,
-      "elapsedMs": 0.47
+      "elapsedMs": 0.54
     },
     {
       "name": "rv32ui-srai",
@@ -308,7 +308,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 218,
-      "elapsedMs": 0.39
+      "elapsedMs": 0.34
     },
     {
       "name": "rv32ui-srl",
@@ -317,7 +317,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 468,
-      "elapsedMs": 1.63
+      "elapsedMs": 1.71
     },
     {
       "name": "rv32ui-srli",
@@ -326,7 +326,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 212,
-      "elapsedMs": 4.89
+      "elapsedMs": 0.42
     },
     {
       "name": "rv32ui-st_ld",
@@ -335,7 +335,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 396,
-      "elapsedMs": 0.43
+      "elapsedMs": 0.48
     },
     {
       "name": "rv32ui-sub",
@@ -344,7 +344,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 419,
-      "elapsedMs": 0.96
+      "elapsedMs": 0.4
     },
     {
       "name": "rv32ui-sw",
@@ -353,7 +353,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 441,
-      "elapsedMs": 2.38
+      "elapsedMs": 0.39
     },
     {
       "name": "rv32ui-xor",
@@ -362,7 +362,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 449,
-      "elapsedMs": 0.76
+      "elapsedMs": 0.57
     },
     {
       "name": "rv32ui-xori",
@@ -371,7 +371,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 169,
-      "elapsedMs": 0.35
+      "elapsedMs": 0.43
     },
     {
       "name": "rv32um-div",
@@ -380,7 +380,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 58,
-      "elapsedMs": 0.56
+      "elapsedMs": 0.4
     },
     {
       "name": "rv32um-divu",
@@ -389,7 +389,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 59,
-      "elapsedMs": 0.32
+      "elapsedMs": 0.34
     },
     {
       "name": "rv32um-mul",
@@ -398,7 +398,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 421,
-      "elapsedMs": 0.42
+      "elapsedMs": 0.58
     },
     {
       "name": "rv32um-mulh",
@@ -407,7 +407,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 421,
-      "elapsedMs": 0.71
+      "elapsedMs": 0.61
     },
     {
       "name": "rv32um-mulhsu",
@@ -416,7 +416,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 421,
-      "elapsedMs": 0.4
+      "elapsedMs": 0.57
     },
     {
       "name": "rv32um-mulhu",
@@ -425,7 +425,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 421,
-      "elapsedMs": 0.4
+      "elapsedMs": 0.53
     },
     {
       "name": "rv32um-rem",
@@ -434,7 +434,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 58,
-      "elapsedMs": 0.24
+      "elapsedMs": 0.3
     },
     {
       "name": "rv32um-remu",
@@ -443,7 +443,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 58,
-      "elapsedMs": 0.21
+      "elapsedMs": 0.36
     },
     {
       "name": "rv32uzba-sh1add",
@@ -452,7 +452,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 427,
-      "elapsedMs": 0.43
+      "elapsedMs": 0.52
     },
     {
       "name": "rv32uzba-sh2add",
@@ -461,7 +461,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 427,
-      "elapsedMs": 0.85
+      "elapsedMs": 0.58
     },
     {
       "name": "rv32uzba-sh3add",
@@ -470,7 +470,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 427,
-      "elapsedMs": 1.8
+      "elapsedMs": 2.56
     }
   ],
   "programs": [
@@ -481,7 +481,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 2114629,
-      "elapsedMs": 74.76,
+      "elapsedMs": 97.53,
       "output": "fib(25)=75025\n"
     },
     {
@@ -491,7 +491,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 199157,
-      "elapsedMs": 11.55,
+      "elapsedMs": 15.92,
       "output": "qsort 1000: err=0 min=4940 max=16772127 hash=72e4eb11\n"
     },
     {
@@ -501,7 +501,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 2580085,
-      "elapsedMs": 74.72,
+      "elapsedMs": 110.79,
       "output": "solved=1 steps=37652 row0=534678912\n"
     },
     {
@@ -511,7 +511,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 39888,
-      "elapsedMs": 2.51,
+      "elapsedMs": 2.72,
       "output": "1267650600228229401496703205376\r\n"
     },
     {
@@ -521,7 +521,7 @@
       "exitCode": 0,
       "state": "halted",
       "instructions": 492526,
-      "elapsedMs": 15.56,
+      "elapsedMs": 16.52,
       "output": "[2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47]\r\n[('brown', 1), ('dog', 1), ('fox', 1), ('jumps', 1), ('lazy', 1), ('over', 1), ('quick', 1), ('the', 2)]\r\nquick\r\n"
     }
   ]

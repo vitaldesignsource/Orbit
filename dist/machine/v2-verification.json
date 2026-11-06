@@ -1,0 +1,58 @@
+{
+  "version": 2,
+  "generatedAt": "2026-11-06T03:41:11.164Z",
+  "checks": {
+    "recurrentFilesystem": {
+      "passed": true,
+      "defaultCapacityBytes": 4194304,
+      "headMatrices": 261,
+      "losslessMatrixState": true
+    },
+    "vector": {
+      "passed": true,
+      "numericalChecks": 14012,
+      "maxSoftmaxAbsoluteError": 2.9057941164367662e-8,
+      "maxRMSNormAbsoluteError": 1.1867141314070295e-7
+    },
+    "model": {
+      "passed": true,
+      "parameters": 260032,
+      "nativeGreedyTokensMatched": 200,
+      "nativeLogitsCompared": 1536,
+      "maxNativeLogitAbsoluteError": 0.00000667
+    },
+    "checkpoint": {
+      "passed": true,
+      "programs": [
+        "c-hello",
+        "rv32ui-sh",
+        "rv32um-div"
+      ],
+      "tokenIdenticalContinuation": true
+    },
+    "workspace": {
+      "passed": true,
+      "filesModelKVAndCPURestored": true,
+      "corruptOptionalModelDoesNotBlockFiles": true
+    },
+    "ui": {
+      "domIntegrationPassed": true,
+      "visualBrowserQA": false
+    }
+  },
+  "execution": {
+    "integerCPU": "verified Qwenputer sparse circuit",
+    "filesystem": "additional GDN recurrent storage circuit; host directory allocator",
+    "vector": "numerical weighted circuit with approximate sparse SwiGLU target",
+    "model": "host-scheduled vector inference; working arrays checkpointed into recurrent filesystem",
+    "fullMergedQwenCheckpoint": false
+  },
+  "hashes": {
+    "dist/machine/memory-fs.js": "4c1045d5a4cd932832ed8f9733817e5154dcc13d0f808f26b75b802ae8918df7",
+    "dist/machine/vector.js": "40123fb0a5fb5bbbe080d3b458f13e3bd40704ac6e9103d63933643a59056ae2",
+    "dist/machine/tiny-model.js": "665776ae397b70a289e7ae1dfdb54c9325a3a2b8dceb0623812753aaa288e34b",
+    "dist/machine/checkpoint.js": "e6c157d8f34df9cf57cc0c366e1260fbfe3e9e15ef3e2ec5d94f4d806d413d6e",
+    "dist/machine/models/stories260K.bin": "b0a507e7ad0f626624f17112325e66691f9076d622e1d3274d103d00299f2696",
+    "dist/machine/models/tok512.bin": "037cb335abb25d1fa9e8ecae30ed2a3a8ace9302862ebcdc05d51a6bbb10c312"
+  }
+}

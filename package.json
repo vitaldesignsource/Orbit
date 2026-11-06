@@ -1,15 +1,21 @@
 {
   "name": "orbit-neural-computer",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
   "type": "module",
-  "description": "A browser desktop with a compiled Qwenputer RV32IM neural CPU circuit and a reference interpreter",
+  "description": "Stateful recurrent-memory filesystem, compiled vector circuits, Stories260K inference, and a neural RV32 computer",
   "scripts": {
-    "test": "node tests/cpu.test.mjs && node tests/reference-fixtures.mjs && node tests/snapshot.test.mjs && node tests/neural.test.mjs",
+    "test": "node tests/cpu.test.mjs && node tests/reference-fixtures.mjs && node tests/snapshot.test.mjs && node tests/neural.test.mjs && node tests/memory-fs.test.mjs && node tests/vector.test.mjs && node tests/tiny-model.test.mjs && node tests/checkpoint.test.mjs && node tests/workspace-state.test.mjs",
     "test:cpu": "node tests/cpu.test.mjs",
     "test:reference": "node tests/reference-fixtures.mjs",
     "test:neural": "node tests/neural.test.mjs",
     "test:snapshot": "node tests/snapshot.test.mjs",
-    "test:neural:all": "node tests/neural.test.mjs --all --write-report"
+    "test:neural:all": "node tests/neural.test.mjs --all --write-report",
+    "test:memory": "node tests/memory-fs.test.mjs",
+    "test:vector": "node tests/vector.test.mjs",
+    "test:model": "node tests/tiny-model.test.mjs",
+    "test:checkpoint": "node tests/checkpoint.test.mjs",
+    "test:state": "node tests/workspace-state.test.mjs",
+    "compile:vector": "node scripts/compile-vector.mjs"
   }
 }

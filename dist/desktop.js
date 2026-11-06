@@ -1,5 +1,5 @@
 import { createApp } from './apps.js';
-import { createComputer } from './machine/lab.js';
+import { createWorkbench } from './machine/workbench.js';
 
 const $ = (s, root = document) => root.querySelector(s);
 const escape = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -21,7 +21,7 @@ const paths = {
 const icon = name => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[name] || paths.notes}</svg>`;
 const appIcon = id => `<span class="app-icon icon-${id}">${icon(id)}</span>`;
 const catalog = [
- {id:'computer',name:'Neural Computer',description:'A RISC-V CPU in the weights'},
+ {id:'computer',name:'Neural Computer',description:'Memory, vectors, and a tiny model'},
  {id:'welcome',name:'Welcome',description:'Make yourself at home'},
  {id:'files',name:'Files',description:'A place for everything'},
  {id:'terminal',name:'Terminal',description:'A little command magic'},
@@ -58,7 +58,7 @@ function openApp(id,options={}){
   if(id==='notes'&&options.fileId){closeWindow(id);}else{focusWindow(id);return;}
  }
  const api={files,saveFiles,openApp,toast,setWallpaper,get wallpaper(){return wallpaper;},escape,appOptions:options};
- let content;try{content=id==='welcome'?welcomeApp():id==='computer'?createComputer(api):createApp(id,api);}catch(error){console.error(error);toast('This app could not open. Please refresh and try again.');return;}
+ let content;try{content=id==='welcome'?welcomeApp():id==='computer'?createWorkbench(api):createApp(id,api);}catch(error){console.error(error);toast('This app could not open. Please refresh and try again.');return;}
  const el=document.createElement('section');el.className='window';el.setAttribute('aria-label',app.name+' window');el.setAttribute('role','region');
  const desktopWidth=window.innerWidth, desktopHeight=window.innerHeight-145;
  const sizes={computer:[1040,650],welcome:[790,482],files:[760,490],terminal:[705,445],notes:[730,490],calculator:[350,490],settings:[680,480]};

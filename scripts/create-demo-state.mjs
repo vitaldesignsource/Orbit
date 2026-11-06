@@ -1,0 +1,10 @@
+import {readFile,writeFile} from 'node:fs/promises';
+import {gunzipSync} from 'node:zlib';
+import {newSession,exportWorkspace,PATHS} from '../dist/machine/workspace-session.js';
+import {Stories260K} from '../dist/machine/tiny-model.js';
+import {CompiledVectorUnit} from '../dist/machine/vector.js';
+import {NeuralRV32} from '../dist/machine/neural.js';
+const machine=new URL('../dist/machine/',import.meta.url),read=p=>readFile(new URL(p,machine));
+const s=newSession();s.fs.writeFile('/documents/From this chat.txt','This document is stored in recurrent Gated DeltaNet matrices.\nImport this state file into Orbit 2 to recover it, the model, and paused generation.\n');s.fs.writeFile(PATHS.model,await read('models/stories260K.bin'));s.fs.writeFile(PATHS.tokenizer,await read('models/tok512.bin'));s.unit=new CompiledVectorUnit();s.model=new Stories260K(s.fs.readFile(PATHS.model),s.fs.readFile(PATHS.tokenizer),{unit:s.unit});s.model.begin('Once upon a time');for(let i=0;i<20;i++)s.model.step();s.fs.writeFile('/documents/story.txt',s.model.text);
+const circuit=JSON.parse(gunzipSync(await read('neural-circuit.json.gz'))),cpu=new NeuralRV32(circuit);cpu.loadSnapshot(JSON.parse(gunzipSync(await read('fixtures/c-hello.snapshot.json.gz'))));s.cpuView={getMachine:()=>({cpu,backend:'neural',program:{id:'c-hello',name:'C · Hello + sum',language:'c'}})};
+const out=process.argv[2]||'Orbit-demo.orbit-state';const data=await exportWorkspace(s);await writeFile(out,data);console.log(`Wrote ${data.length.toLocaleString()} bytes to ${out}; documents, authentic model/tokenizer, paused generation, and neural CPU state included.`);
